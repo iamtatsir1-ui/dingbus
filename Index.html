@@ -288,7 +288,7 @@ function cards(c){
     return(x.routeLabel?'<div class="route-label">'+x.routeLabel+'</div>':'')+
       '<div id="specCard_'+i+'" class="custom'+(soon?' is-approaching eva-card-lock':'')+'">'+
       '<div class="custom-head"><div class="custom-title">'+x.label+'</div>'+
-      '<span class="badge">'+(soon?'<span class="arrival-label">⚠目標巴士接近中</span>':'本站預測')+'</span></div>'+
+      '<span class="badge">'+(soon?'<span class="arrival-label">⚠目標接近中</span>':'本站預測')+'</span></div>'+
       '<div class="custom-pills">'+
       (a.length?a.map((e,j)=>'<div class="custom-pill '+(j===0&&mins(e.eta)<=1?'arrival-alert':'')+'"><div class="custom-time">'+fmt(e.eta)+'</div><div class="custom-wait">'+mins(e.eta)+'分鐘</div></div>').join(''):'<div class="w-full text-center py-3 text-slate-500">暫無即時到站班次數據</div>')+
       '</div></div>';
