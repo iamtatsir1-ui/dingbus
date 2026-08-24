@@ -2,35 +2,80 @@
 <html lang="zh-HK">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>心愛老婆專用即時到站查詢</title>
 
-<!-- Apple iOS 主畫面 Icon 及 Web App 設定 -->
+<!-- PWA 基本 Meta 設定 -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="心愛老婆即時到站">
+<meta name="application-name" content="心愛老婆即時到站">
+<meta name="theme-color" content="#2d3748">
+
+<!-- Apple iOS 主畫面 Icon -->
 <link rel="apple-touch-icon" href="https://files.catbox.moe/v83eg6.png">
 <link rel="apple-touch-icon" sizes="180x180" href="https://files.catbox.moe/v83eg6.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="心愛老婆即時到站">
 
-<!-- Android / Chrome 主畫面 Icon 及 Favicon 設定 -->
+<!-- Android / Chrome Favicon -->
 <link rel="icon" type="image/png" href="https://files.catbox.moe/v83eg6.png">
 <link rel="shortcut icon" href="https://files.catbox.moe/v83eg6.png">
-<meta name="theme-color" content="#2d3748">
+
+<!-- 動態注入 PWA Web Manifest (安全環境模式) -->
+<script>
+(function() {
+  try {
+    const manifest = {
+      name: "心愛老婆專用即時到站查詢",
+      short_name: "心愛老婆即時到站",
+      description: "專為心愛老婆打造的九巴實時到站查詢與到站震動提醒",
+      start_url: window.location.href,
+      display: "standalone",
+      orientation: "portrait",
+      background_color: "#f4f6f8",
+      theme_color: "#2d3748",
+      icons: [
+        {
+          src: "https://files.catbox.moe/v83eg6.png",
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any maskable"
+        },
+        {
+          src: "https://files.catbox.moe/v83eg6.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any maskable"
+        }
+      ]
+    };
+    const stringManifest = JSON.stringify(manifest);
+    const blob = new Blob([stringManifest], {type: 'application/json'});
+    const manifestURL = URL.createObjectURL(blob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = manifestURL;
+    document.head.appendChild(link);
+  } catch (e) {
+    // 忽略在某些受限環境中的 Manifest 生成警告
+  }
+})();
+</script>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 :root{--red:#e31836;--ink:#1e293b}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:#f4f6f8;color:#333;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif}
-.app{max-width:480px;min-height:100vh;margin:auto;background:#fff;box-shadow:0 0 15px #00000012}
-header{position:sticky;top:0;z-index:10;padding:14px 16px;background:#2d3748;color:#fff;box-shadow:0 2px 5px #0002}
+body{margin:0;background:#f4f6f8;color:#333;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;user-select:none;-webkit-tap-highlight-color:transparent}
+.app{max-width:480px;min-height:100vh;margin:auto;background:#fff;box-shadow:0 0 15px #00000012;padding-bottom:env(safe-area-inset-bottom, 20px)}
+header{position:sticky;top:0;z-index:30;padding:max(14px, env(safe-area-inset-top)) 16px 14px;background:#2d3748;color:#fff;box-shadow:0 2px 5px #0002}
 header.kmb{background:var(--red)}
 header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
 .head{display:flex;gap:12px;align-items:center}
 .title{font-size:1.1rem;font-weight:700;line-height:1.3}
 .sub{font-size:.85rem;opacity:.9;margin-top:2px}
-.back{display:none;border:0;background:none;color:#fff;font-size:1.4rem;cursor:pointer}
+.back{display:none;border:0;background:none;color:#fff;font-size:1.4rem;cursor:pointer;padding:0 6px}
 .panel{display:none;padding:16px}
 .panel.active{display:block}
 .option,.primary{width:100%;border-radius:8px;padding:12px 14px;font-weight:700;font-size:.95rem;cursor:pointer}
@@ -61,6 +106,8 @@ header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
 .badge{background:#374151;color:#fff;padding:7px 10px;border-radius:8px;font-size:.9rem;line-height:1.15;text-align:center;white-space:nowrap}
 .etas{display:flex;gap:8px;justify-content:space-between}
 .pill{flex:1;background:#edf2f7;padding:6px;border-radius:4px;text-align:center}
+.pill.vibrate-alert{border:2px solid #ef4444;background:#fee2e2;animation:pulseAlert 1s infinite alternate}
+@keyframes pulseAlert{from{background:#fee2e2}to{background:#fca5a5}}
 .time{font-size:.95rem;font-weight:700}
 .wait{font-size:.75rem;color:#777}
 .route-label{font-size:1rem;font-weight:800;color:var(--ink);margin:2px 2px 7px}
@@ -69,12 +116,16 @@ header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
 .custom-title{font-size:1rem;font-weight:700;line-height:1.35;color:var(--ink)}
 .custom-pills{display:flex;gap:8px;flex-wrap:wrap}
 .custom-pill{flex:1 1 calc(33.333% - 6px);min-width:90px;background:#e2e8f0;border-radius:6px;padding:10px 4px;text-align:center}
+.custom-pill.vibrate-alert{border:2px solid #ef4444;background:#fee2e2;animation:pulseAlert 1s infinite alternate}
 .custom-time{font-size:1.05rem;font-weight:700;color:#0f172a;line-height:1.2}
 .custom-wait{font-size:.78rem;color:#475569;margin-top:4px;font-weight:500}
 .meta{text-align:center;color:#777;font-size:.85rem;margin-top:8px}
 #load{position:fixed;inset:0;z-index:50;background:#0009;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center}
 .spin{width:48px;height:48px;border:5px solid #fff;border-bottom-color:var(--red);border-radius:50%;animation:r 1s linear infinite;margin-bottom:14px}
 @keyframes r{to{transform:rotate(360deg)}}
+
+/* 震動提示浮動 Toast */
+#vibrateToast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293be6;backdrop-filter:blur(8px);color:#fff;padding:10px 20px;border-radius:30px;font-size:.88rem;font-weight:700;z-index:60;display:none;box-shadow:0 4px 15px rgba(0,0,0,0.3);align-items:center;gap:8px}
 
 /* 金色反光按鈕樣式 (Easter Egg 1227) */
 .btn-gold{
@@ -127,13 +178,25 @@ header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
 <main class="app">
   <header id="header">
     <div class="head">
-      <button id="back" class="back" onclick="goBack()">←</button>
-      <div>
+      <button id="back" class="back" onclick="goBack()" aria-label="返回">←</button>
+      <div class="flex-1">
         <div id="headMain" class="title">心愛老婆專用即時到站查詢</div>
         <div id="headSub" class="sub" style="display:none"></div>
       </div>
+      <div id="pwaInstallBadge" style="display:none">
+        <button onclick="installPWA()" class="text-xs bg-white text-slate-800 px-2 py-1 rounded font-bold shadow">安裝 App</button>
+      </div>
     </div>
   </header>
+
+  <!-- 震動提示設定小標籤 -->
+  <div class="bg-slate-100 border-b border-slate-200 px-4 py-1.5 flex items-center justify-between text-xs text-slate-600">
+    <div class="flex items-center gap-1.5">
+      <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+      <span>到站震動提醒已啟用 (3/2/1分鐘)</span>
+    </div>
+    <button onclick="testVibration()" class="text-slate-500 hover:text-slate-900 underline font-medium">測試震動</button>
+  </div>
 
   <section id="step2" class="panel active">
     <h2 class="text-lg font-bold mb-3">輸入路線號碼</h2>
@@ -179,10 +242,137 @@ header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
   <div id="loadText">正在讀取數據...</div>
 </div>
 
+<div id="vibrateToast">📳 <span id="vibrateToastMsg">即將到站提醒</span></div>
+
 <script>
 const API='https://data.etabus.gov.hk/v1/transport/kmb',$=id=>document.getElementById(id);
 let step=2,routeItem,stops=[],timer=null,routeCache=null,routeCacheAt=0,homeBusy=false,currentSelectedStop=null;
 
+/* ========================================================
+   1. 安全防禦性 PWA 註冊與 Service Worker
+   ======================================================== */
+let deferredPrompt = null;
+try {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const badge = $('pwaInstallBadge');
+    if (badge) badge.style.display = 'block';
+  });
+} catch(e) {}
+
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      const badge = $('pwaInstallBadge');
+      if (badge) badge.style.display = 'none';
+    });
+  }
+}
+
+// 採用嚴密 try-catch 包覆，避免在沙盒 iframe (Sandboxed iframe without allow-same-origin) 中存取 navigator.serviceWorker 拋出 SecurityError
+(function setupServiceWorker() {
+  try {
+    // 檢查環境是否允許 ServiceWorker
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        try {
+          const swCode = `
+            const CACHE_NAME = 'kmb-eta-v2';
+            self.addEventListener('install', e => self.skipWaiting());
+            self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+            self.addEventListener('fetch', e => {
+              if (e.request.url.includes('/v1/transport/kmb/')) {
+                e.respondWith(fetch(e.request).catch(() => new Response(JSON.stringify({data:[]}), {headers:{'Content-Type':'application/json'}})));
+              } else {
+                e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+              }
+            });
+          `;
+          const blob = new Blob([swCode], { type: 'text/javascript' });
+          navigator.serviceWorker.register(URL.createObjectURL(blob))
+            .catch(() => {});
+        } catch (innerErr) {}
+      });
+    }
+  } catch (err) {
+    // 在沙盒環境下安全捕獲 SecurityError，不影響任何程式運作
+  }
+})();
+
+/* ========================================================
+   2. 震動提醒引擎 (Vibration Engine)
+   - 3 分鐘：3 秒內震動 3 次
+   - 2 分鐘：3 秒內震動 6 次
+   - 1 分鐘：3 秒內震動 9 次
+   ======================================================== */
+const vibratedKeys = new Set();
+
+function showVibrateToast(msg) {
+  const toast = $('vibrateToast');
+  const toastMsg = $('vibrateToastMsg');
+  if (!toast || !toastMsg) return;
+  toastMsg.textContent = msg;
+  toast.style.display = 'flex';
+  setTimeout(() => { toast.style.display = 'none'; }, 3200);
+}
+
+function triggerArrivalVibration(remainingMinutes, uniqueKey, stopName) {
+  let canVibrate = false;
+  try {
+    canVibrate = typeof navigator !== 'undefined' && ('vibrate' in navigator);
+  } catch(e) {}
+  if (!canVibrate) return;
+  if (![1, 2, 3].includes(remainingMinutes)) return;
+
+  const triggerId = `${uniqueKey}_${remainingMinutes}min`;
+  if (vibratedKeys.has(triggerId)) return; // 該分鐘已震動過
+
+  vibratedKeys.add(triggerId);
+
+  let pattern = [];
+  let desc = '';
+
+  if (remainingMinutes === 3) {
+    // 3 秒內震動 3 次：每個震動 500ms，停頓 500ms
+    pattern = [500, 500, 500, 500, 500];
+    desc = `${stopName || '點選車站'}：還有 3 分鐘到站 (震動 3 次)`;
+  } else if (remainingMinutes === 2) {
+    // 3 秒內震動 6 次：每個震動 250ms，停頓 250ms
+    pattern = [250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250];
+    desc = `${stopName || '點選車站'}：還有 2 分鐘到站 (震動 6 次)`;
+  } else if (remainingMinutes === 1) {
+    // 3 秒內震動 9 次：每個震動 170ms，停頓 160ms
+    pattern = [170, 160, 170, 160, 170, 160, 170, 160, 170, 160, 170, 160, 170, 160, 170, 160, 170];
+    desc = `${stopName || '點選車站'}：即將到站！還有 1 分鐘 (震動 9 次)`;
+  }
+
+  if (pattern.length > 0) {
+    try {
+      navigator.vibrate(pattern);
+      showVibrateToast(desc);
+    } catch(e) {}
+  }
+}
+
+function testVibration() {
+  try {
+    if (!('vibrate' in navigator)) {
+      alert('此裝置或瀏覽器不支援 Vibration API 震動功能');
+      return;
+    }
+    navigator.vibrate([500, 500, 500, 500, 500]);
+    showVibrateToast('測試震動中：3 秒內震動 3 次');
+  } catch(e) {
+    alert('觸發震動失敗或權限受限');
+  }
+}
+
+/* ========================================================
+   3. 基礎 UI 及九巴 API 處理邏輯
+   ======================================================== */
 function loading(on,msg='正在讀取數據...'){$('load').style.display=on?'flex':'none';$('loadText').textContent=msg}
 
 async function get(url){
@@ -248,16 +438,13 @@ function checkEasterEgg(){
   }
 }
 
-/* 計算相愛時間天數與年月號 (含第1天包容性計算：+1天) */
+/* 計算相愛時間天數與年月號 */
 function calcLoveStats(){
-  const start=new Date(2014, 11, 27); // 2014年12月27日 (月份0-indexed)
+  const start=new Date(2014, 11, 27);
   const now=new Date();
-  
-  // 計算相距總天數 (包含當天，故 +1)
   const diffMs=now.getTime()-start.getTime();
   const totalDays=Math.floor(diffMs/(1000*60*60*24)) + 1;
   
-  // 計算 年、月、日
   let y=now.getFullYear()-start.getFullYear();
   let m=now.getMonth()-start.getMonth();
   let d=now.getDate()-start.getDate();
@@ -354,7 +541,6 @@ async function searchRoute(){
   let r=$('route').value.trim().toUpperCase();
   if(!r)return alert('請輸入路線號碼！');
   
-  /* 彩蛋判斷：當輸入為 1227 時進入幸福快車頁面 */
   if(r==='1227'){
     openLoveExpress();
     return;
@@ -396,23 +582,37 @@ function startSpecial(main,sub,loader){
 }
 
 function renderCards(cards){
-  $('specialCards').innerHTML=cards.map(x=>`
-    ${x.routeLabel?`<div class="route-label">${x.routeLabel}</div>`:''}
-    <div class="custom">
-      <div class="custom-head">
-        <div class="custom-title">${x.label}</div>
-        <span class="badge">本站預測</span>
+  $('specialCards').innerHTML=cards.map(x=>{
+    const upEtas = upcoming(x.etas);
+    // 檢查第一班車進行震動提醒
+    if (upEtas.length > 0) {
+      const nearestMin = mins(upEtas[0].eta);
+      const uniqueKey = `special_${x.label}_${upEtas[0].eta}`;
+      triggerArrivalVibration(nearestMin, uniqueKey, x.label);
+    }
+
+    return `
+      ${x.routeLabel?`<div class="route-label">${x.routeLabel}</div>`:''}
+      <div class="custom">
+        <div class="custom-head">
+          <div class="custom-title">${x.label}</div>
+          <span class="badge">本站預測</span>
+        </div>
+        <div class="custom-pills">
+          ${upEtas.length?upEtas.map((e, idx)=>{
+            const m = mins(e.eta);
+            const isAlert = idx === 0 && (m === 1 || m === 2 || m === 3);
+            return `
+              <div class="custom-pill ${isAlert ? 'vibrate-alert' : ''}">
+                <div class="custom-time">${format(e.eta)}</div>
+                <div class="custom-wait">${m}分鐘 ${isAlert ? '📳' : ''}</div>
+              </div>
+            `;
+          }).join(''):'<div class="w-full text-center py-3 text-slate-500">暫無即時到站班次數據</div>'}
+        </div>
       </div>
-      <div class="custom-pills">
-        ${upcoming(x.etas).length?upcoming(x.etas).map(e=>`
-          <div class="custom-pill">
-            <div class="custom-time">${format(e.eta)}</div>
-            <div class="custom-wait">${mins(e.eta)}分鐘</div>
-          </div>
-        `).join(''):'<div class="w-full text-center py-3 text-slate-500">暫無即時到站班次數據</div>'}
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function quick71(){startSpecial('[九巴／龍運] 71A','富亨總站（TP991）往 大埔墟站',load71)}
@@ -505,7 +705,7 @@ function renderStops(){
   `).join('');
 }
 
-/* 獨立更新車站到站時間與尚餘分鐘函數 */
+/* 獨立更新車站到站時間與尚餘分鐘函數 (含震動判定) */
 async function fetchStopEta(i){
   if(i===null || step!==4) return;
   let targets=[];
@@ -525,6 +725,14 @@ async function fetchStopEta(i){
     try{
       let r=await get(`${API}/eta/${s.stop}/${routeItem.route}/${routeItem.service}`);
       let e=upcoming((r.data||[]).filter(x=>x.eta&&x.dir===dir));
+      
+      // 若為使用者點選的目標車站，且有最近班次，觸發震動檢查
+      if(isTarget && e.length > 0){
+        const firstEtaMin = mins(e[0].eta);
+        const uniqueKey = `${routeItem.route}_${s.stop}_${e[0].eta}`;
+        triggerArrivalVibration(firstEtaMin, uniqueKey, s.name);
+      }
+
       let badgeBg=isTarget?'background:var(--red);font-weight:bold;':'background:#64748b;';
       let badgeText=isTarget?'🎯 點選車站':'鄰近車站';
       let targetClass=isTarget?'eta target':'eta';
@@ -535,12 +743,16 @@ async function fetchStopEta(i){
             <span class="badge" style="${badgeBg}">${badgeText}</span>
           </div>
           <div class="etas">
-            ${e.length?e.slice(0,3).map(x=>`
-              <div class="pill">
-                <div class="time">${format(x.eta)}</div>
-                <div class="wait">${mins(x.eta)}分鐘</div>
-              </div>
-            `).join(''):'<span class="text-sm text-slate-500">暫無實時到站數據</span>'}
+            ${e.length?e.slice(0,3).map((x, pillIdx)=>{
+              const m = mins(x.eta);
+              const isAlert = isTarget && pillIdx === 0 && (m === 1 || m === 2 || m === 3);
+              return `
+                <div class="pill ${isAlert ? 'vibrate-alert' : ''}">
+                  <div class="time">${format(x.eta)}</div>
+                  <div class="wait">${m}分鐘 ${isAlert ? '📳' : ''}</div>
+                </div>
+              `;
+            }).join(''):'<span class="text-sm text-slate-500">暫無實時到站數據</span>'}
           </div>
         </div>
       `;
@@ -586,7 +798,6 @@ async function toggle(i){
     }
   });
   
-  // 展開車站後，平滑將選取的車站置中於螢幕垂直中央
   const targetEl = $('stop' + i);
   if(targetEl){
     setTimeout(()=>scrollToCenter(targetEl), 50);
