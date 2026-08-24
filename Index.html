@@ -2,84 +2,46 @@
 <html lang="zh-HK">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>心愛老婆專用即時到站查詢</title>
 
-<!-- PWA 基本 Meta 設定 -->
-<meta name="mobile-web-app-capable" content="yes">
+<!-- PWA Web App 設定 & 支援 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="心愛老婆即時到站">
-<meta name="application-name" content="心愛老婆即時到站">
 <meta name="theme-color" content="#2d3748">
+<meta name="application-name" content="心愛老婆即時到站">
+<meta name="mobile-web-app-capable" content="yes">
 
-<!-- Apple iOS 主畫面 Icon -->
+<!-- Apple iOS & Android App Icon -->
 <link rel="apple-touch-icon" href="https://files.catbox.moe/v83eg6.png">
 <link rel="apple-touch-icon" sizes="180x180" href="https://files.catbox.moe/v83eg6.png">
-
-<!-- Android / Chrome Favicon -->
 <link rel="icon" type="image/png" href="https://files.catbox.moe/v83eg6.png">
 <link rel="shortcut icon" href="https://files.catbox.moe/v83eg6.png">
 
-<!-- 動態注入 PWA Web Manifest (安全環境模式) -->
-<script>
-(function() {
-  try {
-    const manifest = {
-      name: "心愛老婆專用即時到站查詢",
-      short_name: "心愛老婆即時到站",
-      description: "專為心愛老婆打造的九巴實時到站查詢與到站震動提醒",
-      start_url: window.location.href,
-      display: "standalone",
-      orientation: "portrait",
-      background_color: "#f4f6f8",
-      theme_color: "#2d3748",
-      icons: [
-        {
-          src: "https://files.catbox.moe/v83eg6.png",
-          sizes: "192x192",
-          type: "image/png",
-          purpose: "any maskable"
-        },
-        {
-          src: "https://files.catbox.moe/v83eg6.png",
-          sizes: "512x512",
-          type: "image/png",
-          purpose: "any maskable"
-        }
-      ]
-    };
-    const stringManifest = JSON.stringify(manifest);
-    const blob = new Blob([stringManifest], {type: 'application/json'});
-    const manifestURL = URL.createObjectURL(blob);
-    const link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = manifestURL;
-    document.head.appendChild(link);
-  } catch (e) {
-    // 忽略在某些受限環境中的 Manifest 生成警告
-  }
-})();
-</script>
+<!-- Inline Web App Manifest Data URI -->
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%E5%BF%83%E6%84%9B%E8%80%81%E5%A9%86%E5%B0%88%E7%94%A8%E5%8D%B3%E6%99%82%E5%88%B0%E7%AB%99%E6%9F%A5%E8%A9%A2%22%2C%22short_name%22%3A%22%E5%BF%83%E6%84%9B%E5%88%B0%E7%AB%99%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%232d3748%22%2C%22theme_color%22%3A%22%232d3748%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Ffiles.catbox.moe%2Fv83eg6.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Ffiles.catbox.moe%2Fv83eg6.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
 
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-:root{--red:#e31836;--ink:#1e293b}
+:root{--red:#e31836;--ink:#1e293b;--eva-red:#ff003c;--eva-dark:#110104}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:#f4f6f8;color:#333;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;user-select:none;-webkit-tap-highlight-color:transparent}
-.app{max-width:480px;min-height:100vh;margin:auto;background:#fff;box-shadow:0 0 15px #00000012;padding-bottom:env(safe-area-inset-bottom, 20px)}
-header{position:sticky;top:0;z-index:30;padding:max(14px, env(safe-area-inset-top)) 16px 14px;background:#2d3748;color:#fff;box-shadow:0 2px 5px #0002}
+body{margin:0;background:#f4f6f8;color:#333;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;overflow-x:hidden}
+.app{max-width:480px;min-height:100vh;margin:auto;background:#fff;box-shadow:0 0 15px #00000012;position:relative;z-index:1}
+header{position:sticky;top:0;z-index:30;padding:14px 16px;background:#2d3748;color:#fff;box-shadow:0 2px 5px #0002;transition:background .3s}
 header.kmb{background:var(--red)}
 header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
+header.eva-header{background:linear-gradient(90deg, #990000, #ff0033, #990000)!important;box-shadow:0 0 15px rgba(255,0,60,0.8)}
 .head{display:flex;gap:12px;align-items:center}
 .title{font-size:1.1rem;font-weight:700;line-height:1.3}
 .sub{font-size:.85rem;opacity:.9;margin-top:2px}
-.back{display:none;border:0;background:none;color:#fff;font-size:1.4rem;cursor:pointer;padding:0 6px}
+.back{display:none;border:0;background:none;color:#fff;font-size:1.4rem;cursor:pointer}
 .panel{display:none;padding:16px}
 .panel.active{display:block}
 .option,.primary{width:100%;border-radius:8px;padding:12px 14px;font-weight:700;font-size:.95rem;cursor:pointer}
-.option{background:#fff;border:2px solid #e2e8f0;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:#000}
+.option{background:#fff;border:2px solid #e2e8f0;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:#000;transition:all .2s}
+.option:active{transform:scale(.98)}
 .shortcut-blue{background:#dbeafe;border-color:#1e3a8a}
 .shortcut-yellow{background:#fef3c7;border-color:#92400e}
 .shortcut-gap{margin-top:22px}
@@ -92,7 +54,7 @@ header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
 .tag{font-size:.75rem;padding:3px 6px;border-radius:4px;color:#fff;background:var(--red);white-space:nowrap}
 .timeline{position:relative;margin:8px 0 0 24px}
 .timeline:before{content:"";position:absolute;left:-17px;top:15px;bottom:25px;width:3px;background:#e2e8f0}
-.stop{position:relative;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:12px;transition:all .2s ease;scroll-margin-top:20px}
+.stop{position:relative;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:12px;transition:all .25s ease;scroll-margin-top:20px}
 .stop.target-selected{border:2px solid var(--red)!important;box-shadow:0 3px 10px rgba(227,24,54,0.2)}
 .stop.target-selected .stop-head{background:#fff0f2;color:var(--red);font-weight:800}
 .stop.target-selected .dot{border-color:var(--red)!important;background:var(--red)!important}
@@ -106,26 +68,20 @@ header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
 .badge{background:#374151;color:#fff;padding:7px 10px;border-radius:8px;font-size:.9rem;line-height:1.15;text-align:center;white-space:nowrap}
 .etas{display:flex;gap:8px;justify-content:space-between}
 .pill{flex:1;background:#edf2f7;padding:6px;border-radius:4px;text-align:center}
-.pill.vibrate-alert{border:2px solid #ef4444;background:#fee2e2;animation:pulseAlert 1s infinite alternate}
-@keyframes pulseAlert{from{background:#fee2e2}to{background:#fca5a5}}
 .time{font-size:.95rem;font-weight:700}
 .wait{font-size:.75rem;color:#777}
 .route-label{font-size:1rem;font-weight:800;color:var(--ink);margin:2px 2px 7px}
-.custom{background:#f1f5f9;border:2px solid #475569;border-radius:10px;padding:14px;margin-bottom:16px;box-shadow:0 2px 8px #0000000a}
+.custom{background:#f1f5f9;border:2px solid #475569;border-radius:10px;padding:14px;margin-bottom:16px;box-shadow:0 2px 8px #0000000a;transition:all .3s}
 .custom-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}
 .custom-title{font-size:1rem;font-weight:700;line-height:1.35;color:var(--ink)}
 .custom-pills{display:flex;gap:8px;flex-wrap:wrap}
-.custom-pill{flex:1 1 calc(33.333% - 6px);min-width:90px;background:#e2e8f0;border-radius:6px;padding:10px 4px;text-align:center}
-.custom-pill.vibrate-alert{border:2px solid #ef4444;background:#fee2e2;animation:pulseAlert 1s infinite alternate}
+.custom-pill{flex:1 1 calc(33.333% - 6px);min-width:90px;background:#e2e8f0;border-radius:6px;padding:10px 4px;text-align:center;transition:all .3s}
 .custom-time{font-size:1.05rem;font-weight:700;color:#0f172a;line-height:1.2}
 .custom-wait{font-size:.78rem;color:#475569;margin-top:4px;font-weight:500}
 .meta{text-align:center;color:#777;font-size:.85rem;margin-top:8px}
-#load{position:fixed;inset:0;z-index:50;background:#0009;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center}
+#load{position:fixed;inset:0;z-index:60;background:#0009;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center}
 .spin{width:48px;height:48px;border:5px solid #fff;border-bottom-color:var(--red);border-radius:50%;animation:r 1s linear infinite;margin-bottom:14px}
 @keyframes r{to{transform:rotate(360deg)}}
-
-/* 震動提示浮動 Toast */
-#vibrateToast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293be6;backdrop-filter:blur(8px);color:#fff;padding:10px 20px;border-radius:30px;font-size:.88rem;font-weight:700;z-index:60;display:none;box-shadow:0 4px 15px rgba(0,0,0,0.3);align-items:center;gap:8px}
 
 /* 金色反光按鈕樣式 (Easter Egg 1227) */
 .btn-gold{
@@ -144,12 +100,7 @@ header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(
-    60deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.8) 50%,
-    transparent 70%
-  );
+  background: linear-gradient(60deg, transparent 30%, rgba(255, 255, 255, 0.8) 50%, transparent 70%);
   transform: rotate(30deg);
   animation: goldShine 2s infinite;
 }
@@ -172,31 +123,168 @@ header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
   -webkit-text-fill-color: transparent;
   font-weight: 900;
 }
+
+/* ==========================================================================
+   🚨 EVA 風格 1 分鐘到站警戒提示系統 (NERV EMERGENCY ALERT)
+   ========================================================================== */
+#evaOverlay{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  pointer-events:none;
+  display:none;
+  overflow:hidden;
+}
+
+/* 紅色環境呼吸微閃層 (週期約 1.1s) */
+.eva-ambient{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at center, rgba(255,0,60,0.12) 0%, rgba(255,0,60,0.35) 80%, rgba(200,0,30,0.65) 100%);
+  animation:evaBreathe 1.1s ease-in-out infinite alternate;
+  box-shadow:inset 0 0 50px rgba(255,0,60,0.85);
+}
+@keyframes evaBreathe{
+  0%{ opacity: 0.35; }
+  100%{ opacity: 1; }
+}
+
+/* 頂部與底部 EVA 經典警戒走馬燈 (紅底黑字無縫循環滾動) */
+.eva-marquee-bar{
+  position:absolute;
+  left:0;
+  right:0;
+  height:32px;
+  background:#ff003c;
+  color:#000;
+  font-family:"Arial Black",Impact,sans-serif;
+  font-size:14px;
+  font-weight:900;
+  line-height:32px;
+  letter-spacing:1px;
+  box-shadow:0 0 12px rgba(255,0,60,0.9);
+  overflow:hidden;
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  z-index:2;
+}
+.eva-marquee-top{ top:0; }
+.eva-marquee-bottom{ bottom:0; }
+
+.eva-track-left{
+  display:inline-block;
+  white-space:nowrap;
+  animation:marqueeLeft 10s linear infinite;
+}
+.eva-track-right{
+  display:inline-block;
+  white-space:nowrap;
+  animation:marqueeRight 10s linear infinite;
+}
+
+@keyframes marqueeLeft{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-50%); }
+}
+@keyframes marqueeRight{
+  0%{ transform:translateX(-50%); }
+  100%{ transform:translateX(0); }
+}
+
+/* 四角 EVA HUD 瞄準框 (L-Shape Brackets) */
+.eva-hud-corner{
+  position:absolute;
+  width:36px;
+  height:36px;
+  border:4px solid #ff003c;
+  filter:drop-shadow(0 0 8px #ff003c);
+  z-index:3;
+}
+.eva-hud-tl{ top:40px; left:12px; border-right:0; border-bottom:0; }
+.eva-hud-tr{ top:40px; right:12px; border-left:0; border-bottom:0; }
+.eva-hud-bl{ bottom:40px; left:12px; border-right:0; border-top:0; }
+.eva-hud-br{ bottom:40px; right:12px; border-left:0; border-top:0; }
+
+/* 目標車站卡片高亮鎖定樣式 (eva-card-lock) */
+.eva-card-lock{
+  position:relative;
+  border:2.5px solid #ff003c !important;
+  background:linear-gradient(135deg, #fff5f5 0%, #ffebeb 100%) !important;
+  box-shadow:0 0 20px rgba(255,0,60,0.55), inset 0 0 10px rgba(255,0,60,0.2) !important;
+  animation:evaCardPulse 1.1s ease-in-out infinite alternate !important;
+}
+.eva-card-lock .badge{
+  background:linear-gradient(90deg, #b91c1c, #ff003c) !important;
+  box-shadow:0 0 8px rgba(255,0,60,0.7) !important;
+  animation:evaBadgeFlash 0.55s ease-in-out infinite alternate;
+}
+.eva-card-lock .custom-pill:first-child,
+.eva-card-lock .pill:first-child{
+  background:#fee2e2 !important;
+  border:1.5px solid #ff003c !important;
+  box-shadow:0 0 10px rgba(255,0,60,0.4);
+}
+.eva-card-lock .custom-pill:first-child .custom-time,
+.eva-card-lock .pill:first-child .time{
+  color:#b91c1c !important;
+  font-weight:900 !important;
+}
+.eva-card-lock .custom-pill:first-child .custom-wait,
+.eva-card-lock .pill:first-child .wait{
+  color:#ff003c !important;
+  font-weight:800 !important;
+}
+
+@keyframes evaCardPulse{
+  0%{ transform:scale(1); box-shadow:0 0 12px rgba(255,0,60,0.4); }
+  100%{ transform:scale(1.015); box-shadow:0 0 24px rgba(255,0,60,0.85); }
+}
+@keyframes evaBadgeFlash{
+  0%{ opacity:0.85; }
+  100%{ opacity:1; filter:brightness(1.2); }
+}
 </style>
 </head>
 <body>
+
+<!-- 🚨 EVA 風格 1 分鐘到站警戒提示系統 全螢幕圖層 (pointer-events: none) -->
+<div id="evaOverlay">
+  <div class="eva-ambient"></div>
+  
+  <!-- 頂部走馬燈 (向左滾動) -->
+  <div class="eva-marquee-bar eva-marquee-top">
+    <div class="eva-track-left">
+      <span>🚨 目標巴士接近中 🚨 TARGET APPROACHING 🚨 EMERGENCY 🚨 目標巴士接近中 🚨 TARGET APPROACHING 🚨 EMERGENCY 🚨&nbsp;</span>
+      <span>🚨 目標巴士接近中 🚨 TARGET APPROACHING 🚨 EMERGENCY 🚨 目標巴士接近中 🚨 TARGET APPROACHING 🚨 EMERGENCY 🚨&nbsp;</span>
+    </div>
+  </div>
+  
+  <!-- 四角 EVA HUD 瞄準標記 -->
+  <div class="eva-hud-corner eva-hud-tl"></div>
+  <div class="eva-hud-corner eva-hud-tr"></div>
+  <div class="eva-hud-corner eva-hud-bl"></div>
+  <div class="eva-hud-corner eva-hud-br"></div>
+  
+  <!-- 底部走馬燈 (向右反向滾動) -->
+  <div class="eva-marquee-bar eva-marquee-bottom">
+    <div class="eva-track-right">
+      <span>🚨 TARGET APPROACHING 🚨 目標巴士接近中 🚨 EMERGENCY 🚨 TARGET APPROACHING 🚨 目標巴士接近中 🚨 EMERGENCY 🚨&nbsp;</span>
+      <span>🚨 TARGET APPROACHING 🚨 目標巴士接近中 🚨 EMERGENCY 🚨 TARGET APPROACHING 🚨 目標巴士接近中 🚨 EMERGENCY 🚨&nbsp;</span>
+    </div>
+  </div>
+</div>
+
 <main class="app">
   <header id="header">
     <div class="head">
-      <button id="back" class="back" onclick="goBack()" aria-label="返回">←</button>
-      <div class="flex-1">
+      <button id="back" class="back" onclick="goBack()">←</button>
+      <div>
         <div id="headMain" class="title">心愛老婆專用即時到站查詢</div>
         <div id="headSub" class="sub" style="display:none"></div>
       </div>
-      <div id="pwaInstallBadge" style="display:none">
-        <button onclick="installPWA()" class="text-xs bg-white text-slate-800 px-2 py-1 rounded font-bold shadow">安裝 App</button>
-      </div>
     </div>
   </header>
-
-  <!-- 震動提示設定小標籤 -->
-  <div class="bg-slate-100 border-b border-slate-200 px-4 py-1.5 flex items-center justify-between text-xs text-slate-600">
-    <div class="flex items-center gap-1.5">
-      <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
-      <span>到站震動提醒已啟用 (3/2/1分鐘)</span>
-    </div>
-    <button onclick="testVibration()" class="text-slate-500 hover:text-slate-900 underline font-medium">測試震動</button>
-  </div>
 
   <section id="step2" class="panel active">
     <h2 class="text-lg font-bold mb-3">輸入路線號碼</h2>
@@ -242,137 +330,38 @@ header.love{background:linear-gradient(135deg, #b8860b, #d4af37, #aa771c)}
   <div id="loadText">正在讀取數據...</div>
 </div>
 
-<div id="vibrateToast">📳 <span id="vibrateToastMsg">即將到站提醒</span></div>
-
 <script>
 const API='https://data.etabus.gov.hk/v1/transport/kmb',$=id=>document.getElementById(id);
 let step=2,routeItem,stops=[],timer=null,routeCache=null,routeCacheAt=0,homeBusy=false,currentSelectedStop=null;
 
-/* ========================================================
-   1. 安全防禦性 PWA 註冊與 Service Worker
-   ======================================================== */
-let deferredPrompt = null;
+/* PWA Service Worker 註冊 (安全沙盒相容包裹，避免 iframe 拋出 SecurityError) */
 try {
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    const badge = $('pwaInstallBadge');
-    if (badge) badge.style.display = 'block';
-  });
-} catch(e) {}
-
-function installPWA() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-      deferredPrompt = null;
-      const badge = $('pwaInstallBadge');
-      if (badge) badge.style.display = 'none';
+  if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      try {
+        const swCode = `
+          const CACHE_NAME = 'kmb-wife-app-v2';
+          self.addEventListener('install', e => { self.skipWaiting(); });
+          self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
+          self.addEventListener('fetch', e => {
+            if (e.request.url.includes('/api/') || e.request.url.includes('data.etabus.gov.hk')) {
+              return;
+            }
+            e.respondWith(
+              fetch(e.request).catch(() => caches.match(e.request))
+            );
+          });
+        `;
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl).catch(() => {});
+      } catch (err) {}
     });
   }
+} catch (e) {
+  // 當處於無 allow-same-origin 的沙盒 iframe 時安全靜音忽略
 }
 
-// 採用嚴密 try-catch 包覆，避免在沙盒 iframe (Sandboxed iframe without allow-same-origin) 中存取 navigator.serviceWorker 拋出 SecurityError
-(function setupServiceWorker() {
-  try {
-    // 檢查環境是否允許 ServiceWorker
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        try {
-          const swCode = `
-            const CACHE_NAME = 'kmb-eta-v2';
-            self.addEventListener('install', e => self.skipWaiting());
-            self.addEventListener('activate', e => e.waitUntil(clients.claim()));
-            self.addEventListener('fetch', e => {
-              if (e.request.url.includes('/v1/transport/kmb/')) {
-                e.respondWith(fetch(e.request).catch(() => new Response(JSON.stringify({data:[]}), {headers:{'Content-Type':'application/json'}})));
-              } else {
-                e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-              }
-            });
-          `;
-          const blob = new Blob([swCode], { type: 'text/javascript' });
-          navigator.serviceWorker.register(URL.createObjectURL(blob))
-            .catch(() => {});
-        } catch (innerErr) {}
-      });
-    }
-  } catch (err) {
-    // 在沙盒環境下安全捕獲 SecurityError，不影響任何程式運作
-  }
-})();
-
-/* ========================================================
-   2. 震動提醒引擎 (Vibration Engine)
-   - 3 分鐘：3 秒內震動 3 次
-   - 2 分鐘：3 秒內震動 6 次
-   - 1 分鐘：3 秒內震動 9 次
-   ======================================================== */
-const vibratedKeys = new Set();
-
-function showVibrateToast(msg) {
-  const toast = $('vibrateToast');
-  const toastMsg = $('vibrateToastMsg');
-  if (!toast || !toastMsg) return;
-  toastMsg.textContent = msg;
-  toast.style.display = 'flex';
-  setTimeout(() => { toast.style.display = 'none'; }, 3200);
-}
-
-function triggerArrivalVibration(remainingMinutes, uniqueKey, stopName) {
-  let canVibrate = false;
-  try {
-    canVibrate = typeof navigator !== 'undefined' && ('vibrate' in navigator);
-  } catch(e) {}
-  if (!canVibrate) return;
-  if (![1, 2, 3].includes(remainingMinutes)) return;
-
-  const triggerId = `${uniqueKey}_${remainingMinutes}min`;
-  if (vibratedKeys.has(triggerId)) return; // 該分鐘已震動過
-
-  vibratedKeys.add(triggerId);
-
-  let pattern = [];
-  let desc = '';
-
-  if (remainingMinutes === 3) {
-    // 3 秒內震動 3 次：每個震動 500ms，停頓 500ms
-    pattern = [500, 500, 500, 500, 500];
-    desc = `${stopName || '點選車站'}：還有 3 分鐘到站 (震動 3 次)`;
-  } else if (remainingMinutes === 2) {
-    // 3 秒內震動 6 次：每個震動 250ms，停頓 250ms
-    pattern = [250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250];
-    desc = `${stopName || '點選車站'}：還有 2 分鐘到站 (震動 6 次)`;
-  } else if (remainingMinutes === 1) {
-    // 3 秒內震動 9 次：每個震動 170ms，停頓 160ms
-    pattern = [170, 160, 170, 160, 170, 160, 170, 160, 170, 160, 170, 160, 170, 160, 170, 160, 170];
-    desc = `${stopName || '點選車站'}：即將到站！還有 1 分鐘 (震動 9 次)`;
-  }
-
-  if (pattern.length > 0) {
-    try {
-      navigator.vibrate(pattern);
-      showVibrateToast(desc);
-    } catch(e) {}
-  }
-}
-
-function testVibration() {
-  try {
-    if (!('vibrate' in navigator)) {
-      alert('此裝置或瀏覽器不支援 Vibration API 震動功能');
-      return;
-    }
-    navigator.vibrate([500, 500, 500, 500, 500]);
-    showVibrateToast('測試震動中：3 秒內震動 3 次');
-  } catch(e) {
-    alert('觸發震動失敗或權限受限');
-  }
-}
-
-/* ========================================================
-   3. 基礎 UI 及九巴 API 處理邏輯
-   ======================================================== */
 function loading(on,msg='正在讀取數據...'){$('load').style.display=on?'flex':'none';$('loadText').textContent=msg}
 
 async function get(url){
@@ -391,6 +380,35 @@ async function allRoutes(){
   return routeCache;
 }
 
+/* ==========================================================================
+   🚨 EVA 警戒狀態控制系統 (全自動偵測啟用與即時解除)
+   ========================================================================== */
+let isEvaAlertActive = false;
+
+function setEvaAlert(active, targetElement = null){
+  const overlay = $('evaOverlay');
+  const header = $('header');
+  
+  if(active){
+    if(!isEvaAlertActive){
+      overlay.style.display = 'block';
+      header.classList.add('eva-header');
+      isEvaAlertActive = true;
+    }
+    document.querySelectorAll('.eva-card-lock').forEach(el => el.classList.remove('eva-card-lock'));
+    if(targetElement){
+      targetElement.classList.add('eva-card-lock');
+    }
+  } else {
+    if(isEvaAlertActive){
+      overlay.style.display = 'none';
+      header.classList.remove('eva-header');
+      document.querySelectorAll('.eva-card-lock').forEach(el => el.classList.remove('eva-card-lock'));
+      isEvaAlertActive = false;
+    }
+  }
+}
+
 function setStep(n){
   step=n;
   [2,3,4,5,6].forEach(i=>{
@@ -401,6 +419,11 @@ function setStep(n){
   $('header').classList.toggle('kmb',n===4||n===5);
   $('header').classList.toggle('love',n===6);
   
+  // 離開查詢頁面時自動關閉 EVA 警戒
+  if(n===2||n===3||n===6){
+    setEvaAlert(false);
+  }
+
   if(n===2){
     $('headMain').textContent='心愛老婆專用即時到站查詢';
     $('headSub').style.display='none';
@@ -414,6 +437,7 @@ function setStep(n){
 }
 
 function goBack(){
+  setEvaAlert(false);
   setStep((step===5||step===6)?2:step-1);
 }
 
@@ -438,10 +462,11 @@ function checkEasterEgg(){
   }
 }
 
-/* 計算相愛時間天數與年月號 */
+/* 計算相愛時間天數與年月號 (含第1天包容性計算：+1天) */
 function calcLoveStats(){
-  const start=new Date(2014, 11, 27);
+  const start=new Date(2014, 11, 27); // 2014年12月27日 (月份0-indexed)
   const now=new Date();
+  
   const diffMs=now.getTime()-start.getTime();
   const totalDays=Math.floor(diffMs/(1000*60*60*24)) + 1;
   
@@ -582,37 +607,40 @@ function startSpecial(main,sub,loader){
 }
 
 function renderCards(cards){
-  $('specialCards').innerHTML=cards.map(x=>{
-    const upEtas = upcoming(x.etas);
-    // 檢查第一班車進行震動提醒
-    if (upEtas.length > 0) {
-      const nearestMin = mins(upEtas[0].eta);
-      const uniqueKey = `special_${x.label}_${upEtas[0].eta}`;
-      triggerArrivalVibration(nearestMin, uniqueKey, x.label);
-    }
+  let shouldAlert = false;
+  let firstAlertCardIdx = -1;
 
+  $('specialCards').innerHTML=cards.map((x, idx)=>{
+    const upcomingList = upcoming(x.etas);
+    if(upcomingList.length && mins(upcomingList[0].eta) <= 1){
+      shouldAlert = true;
+      if(firstAlertCardIdx === -1) firstAlertCardIdx = idx;
+    }
+    
     return `
       ${x.routeLabel?`<div class="route-label">${x.routeLabel}</div>`:''}
-      <div class="custom">
+      <div id="specCard_${idx}" class="custom">
         <div class="custom-head">
           <div class="custom-title">${x.label}</div>
           <span class="badge">本站預測</span>
         </div>
         <div class="custom-pills">
-          ${upEtas.length?upEtas.map((e, idx)=>{
-            const m = mins(e.eta);
-            const isAlert = idx === 0 && (m === 1 || m === 2 || m === 3);
-            return `
-              <div class="custom-pill ${isAlert ? 'vibrate-alert' : ''}">
-                <div class="custom-time">${format(e.eta)}</div>
-                <div class="custom-wait">${m}分鐘 ${isAlert ? '📳' : ''}</div>
-              </div>
-            `;
-          }).join(''):'<div class="w-full text-center py-3 text-slate-500">暫無即時到站班次數據</div>'}
+          ${upcomingList.length?upcomingList.map(e=>`
+            <div class="custom-pill">
+              <div class="custom-time">${format(e.eta)}</div>
+              <div class="custom-wait">${mins(e.eta)}分鐘</div>
+            </div>
+          `).join(''):'<div class="w-full text-center py-3 text-slate-500">暫無即時到站班次數據</div>'}
         </div>
       </div>
     `;
   }).join('');
+
+  if(shouldAlert && firstAlertCardIdx !== -1){
+    setEvaAlert(true, $('specCard_' + firstAlertCardIdx));
+  } else {
+    setEvaAlert(false);
+  }
 }
 
 function quick71(){startSpecial('[九巴／龍運] 71A','富亨總站（TP991）往 大埔墟站',load71)}
@@ -680,7 +708,6 @@ async function choose(x){
     $('headSub').style.display='block';
     setStep(4);
     
-    // 設定每 15 秒自動刷新已選車站的即時到站時間與尚餘分鐘
     clearInterval(timer);
     timer=setInterval(()=>{
       if(step===4 && currentSelectedStop!==null){
@@ -705,9 +732,12 @@ function renderStops(){
   `).join('');
 }
 
-/* 獨立更新車站到站時間與尚餘分鐘函數 (含震動判定) */
+/* 獨立更新車站到站時間與尚餘分鐘，並自動判斷 EVA <=1分鐘 警戒 */
 async function fetchStopEta(i){
-  if(i===null || step!==4) return;
+  if(i===null || step!==4) {
+    setEvaAlert(false);
+    return;
+  }
   let targets=[];
   if(i===0){
     targets=[0,1].filter(idx=>idx<stops.length);
@@ -718,6 +748,8 @@ async function fetchStopEta(i){
   }
   
   let dir=routeItem.bound==='outbound'?'O':'I';
+  let targetHas1MinArrival = false;
+
   await Promise.all(targets.map(async idx=>{
     let s=stops[idx],d=$('detail'+idx);
     if(!d)return;
@@ -726,33 +758,27 @@ async function fetchStopEta(i){
       let r=await get(`${API}/eta/${s.stop}/${routeItem.route}/${routeItem.service}`);
       let e=upcoming((r.data||[]).filter(x=>x.eta&&x.dir===dir));
       
-      // 若為使用者點選的目標車站，且有最近班次，觸發震動檢查
-      if(isTarget && e.length > 0){
-        const firstEtaMin = mins(e[0].eta);
-        const uniqueKey = `${routeItem.route}_${s.stop}_${e[0].eta}`;
-        triggerArrivalVibration(firstEtaMin, uniqueKey, s.name);
+      // 判斷目標車站是否有 <= 1 分鐘班次
+      if(isTarget && e.length && mins(e[0].eta) <= 1){
+        targetHas1MinArrival = true;
       }
 
       let badgeBg=isTarget?'background:var(--red);font-weight:bold;':'background:#64748b;';
       let badgeText=isTarget?'🎯 點選車站':'鄰近車站';
       let targetClass=isTarget?'eta target':'eta';
       d.innerHTML=`
-        <div class="${targetClass}">
+        <div id="etaCard_${idx}" class="${targetClass}">
           <div class="eta-title">
             <span>${s.seq}. ${s.name}</span>
             <span class="badge" style="${badgeBg}">${badgeText}</span>
           </div>
           <div class="etas">
-            ${e.length?e.slice(0,3).map((x, pillIdx)=>{
-              const m = mins(x.eta);
-              const isAlert = isTarget && pillIdx === 0 && (m === 1 || m === 2 || m === 3);
-              return `
-                <div class="pill ${isAlert ? 'vibrate-alert' : ''}">
-                  <div class="time">${format(x.eta)}</div>
-                  <div class="wait">${m}分鐘 ${isAlert ? '📳' : ''}</div>
-                </div>
-              `;
-            }).join(''):'<span class="text-sm text-slate-500">暫無實時到站數據</span>'}
+            ${e.length?e.slice(0,3).map(x=>`
+              <div class="pill">
+                <div class="time">${format(x.eta)}</div>
+                <div class="wait">${mins(x.eta)}分鐘</div>
+              </div>
+            `).join(''):'<span class="text-sm text-slate-500">暫無實時到站數據</span>'}
           </div>
         </div>
       `;
@@ -760,10 +786,18 @@ async function fetchStopEta(i){
       d.textContent='暫未能讀取到站資料';
     }
   }));
+
+  // 自動觸發或解除 EVA 警戒
+  const targetCard = $('stop' + i);
+  if(targetHas1MinArrival){
+    setEvaAlert(true, targetCard);
+  } else {
+    setEvaAlert(false);
+  }
+
   $('updated').textContent='最後更新時間：'+new Date().toLocaleTimeString();
 }
 
-/* 平滑滾動並將點選車站置於螢幕垂直中央 */
 function scrollToCenter(el){
   if(!el) return;
   el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -774,6 +808,7 @@ async function toggle(i){
     document.querySelectorAll('.stop').forEach(x=>x.classList.remove('expanded','target-selected'));
     document.querySelectorAll('[id^=arr]').forEach(x=>x.textContent='▼');
     currentSelectedStop=null;
+    setEvaAlert(false);
     return;
   }
   currentSelectedStop=i;
